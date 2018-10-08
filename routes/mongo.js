@@ -11,7 +11,6 @@ db.once("open", function() {
 var kittySchema = new mongoose.Schema({
   name: String
 });
-var Kitten = mongoose.model("Kitten", kittySchema);
 kittySchema.methods.speak = function() {
   var greeting = this.name
     ? "Meow name is " + this.name
@@ -19,21 +18,37 @@ kittySchema.methods.speak = function() {
   console.log(greeting);
 };
 
+var Kitten = mongoose.model("Kitten", kittySchema);
+var silence = new Kitten({ name: "Silence" });
+
 var fluffy = new Kitten({ name: "fluffy" });
-console.log("fluffy: ", fluffy);
-console.log("fluffy.__proto__: ", fluffy.__proto__);
-// fluffy.speak();
+// console.log("fluffy.__proto__: ", fluffy.__proto__);
+fluffy.speak();
 // fluffy.save(function(err, fluffy) {
 //   if (err) return console.error(err);
 //   fluffy.speak();
 // });
 
+fluffy.save(function(err, fluffy) {
+  if (err) return console.error(err);
+  fluffy.speak();
+});
+
+var findResult;
+Kitten.find(function(err, kittens) {
+  if (err) return console.error(err);
+  findResult = kittens;
+});
+Kitten.find({ name: "findfluffy" }, (err, res) =>
+  console.log("findfluffy", res)
+);
+
 /* GET home page. */
 router.get("/", function(req, res, next) {
   //   res.render("index", { title: "mongo" });
-  res.json(fluffy.__proto__);
+  res.json(findResult);
   //   res.render("index", { title: "MyExpress" }, function(err, html) {
-  // res.send(html);
+  // res.send(findResult);
   //   });
 });
 
